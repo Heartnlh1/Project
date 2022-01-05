@@ -264,8 +264,7 @@ class CardPredictor:
                                                        yl - (
                                                                yh - yl) // 4:yh,
                                                        xl:xr]
-                    # 以上为车牌定位
-                    # 以下为识别车牌中的字符
+
                     predict_result = []
                     word_images = []
                     roi = None
