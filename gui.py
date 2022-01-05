@@ -18,7 +18,35 @@ class Surface(ttk.Frame):
     camera = None
     color_transform = {"green": ("绿牌", "#55FF55"), "yello": ("黄牌", "#FFFF00"), "blue": ("蓝牌", "#6666FF")}
 
+    def __init__(self, win):
+        ttk.Frame.__init__(self, win)
+        frame_left = ttk.Frame(self)
+        frame_right1 = ttk.Frame(self)
+        frame_right2 = ttk.Frame(self)
+        win.title("车牌识别系统")
+        win.state("zoomed")
+        self.pack(fill=tk.BOTH, expand=tk.YES, padx="5", pady="5")
+        frame_left.pack(side=LEFT, expand=1, fill=BOTH)
+        frame_right1.pack(side=TOP, expand=1, fill=tk.Y)
+        frame_right2.pack(side=RIGHT, expand=0)
+        ttk.Label(frame_left, text='原图：',font=("微软雅黑", 20)).pack(anchor="n")
+        ttk.Label(frame_right1, text='形状定位车牌位置：',font=("微软雅黑", 12)).grid(column=0, row=0, sticky=tk.W)
 
+        from_pic_ctl = ttk.Button(frame_right2, text="选择来自图片", width=20,command=self.from_pic)
+
+        self.image_ctl = ttk.Label(frame_left)
+        self.image_ctl.pack(anchor="n")
+
+        self.roi_ctl = ttk.Label(frame_right1)
+        self.roi_ctl.grid(column=0, row=1, sticky=tk.W)
+        ttk.Label(frame_right1, text='形状定位识别结果：',font=("微软雅黑", 12)).grid(column=0, row=2, sticky=tk.W)
+        self.r_ctl = ttk.Label(frame_right1, text="",font=("微软雅黑", 12))  #识别字符
+        self.r_ctl.grid(column=0, row=3, sticky=tk.W)
+        self.color_ctl = ttk.Label(frame_right1, text="", width="20")
+        self.color_ctl.grid(column=0, row=4, sticky=tk.W)  #车牌颜色
+
+        from_pic_ctl.pack(anchor="se", pady="50")
+        self.predictor = function.CardPredictor()
 
 
     def get_imgtk(self, img_bgr):
@@ -56,35 +84,7 @@ class Surface(ttk.Frame):
             self.roi_ctl.configure(state='disabled')
             self.r_ctl.configure(text="")
             self.color_ctl.configure(state='disabled')
-    def init(self, win):
-        ttk.Frame.init(self, win)
-        frame_left = ttk.Frame(self)
-        frame_right1 = ttk.Frame(self)
-        frame_right2 = ttk.Frame(self)
-        win.title("车牌识别")
-        win.state("zoomed")
-        self.pack(fill=tk.BOTH, expand=tk.YES, padx="5", pady="5")
-        frame_left.pack(side=LEFT, expand=1, fill=BOTH)
-        frame_right1.pack(side=TOP, expand=1, fill=tk.Y)
-        frame_right2.pack(side=RIGHT, expand=0)
-        ttk.Label(frame_left, text='原图：',font=("微软雅黑", 20)).pack(anchor="n")
-        ttk.Label(frame_right1, text='车牌位置：',font=("微软雅黑", 12)).grid(column=0, row=0, sticky=tk.W)
 
-        from_pic_ctl = ttk.Button(frame_right2, text="来自图片", width=20,command=self.from_pic)
-
-        self.image_ctl = ttk.Label(frame_left)
-        self.image_ctl.pack(anchor="n")
-
-        self.roi_ctl = ttk.Label(frame_right1)
-        self.roi_ctl.grid(column=0, row=1, sticky=tk.W)
-        ttk.Label(frame_right1, text='识别结果：',font=("微软雅黑", 12)).grid(column=0, row=2, sticky=tk.W)
-        self.r_ctl = ttk.Label(frame_right1, text="",font=("微软雅黑", 12))  #识别字符
-        self.r_ctl.grid(column=0, row=3, sticky=tk.W)
-        self.color_ctl = ttk.Label(frame_right1, text="", width="20")
-        self.color_ctl.grid(column=0, row=4, sticky=tk.W)  #车牌颜色
-
-        from_pic_ctl.pack(anchor="se", pady="50")
-        self.predictor = function.CardPredictor()
     def from_pic(self):
         self.thread_run = False
         self.pic_path = askopenfilename(title="选择识别图片", filetypes=[("jpg图片", "*.jpg")])
@@ -96,7 +96,7 @@ class Surface(ttk.Frame):
             self.show_roi(r, roi, color)
 
 
-def closeWindow():
+def close_window():
     print("destroy")
     if surface.thread_run:
         surface.thread_run = False
@@ -108,5 +108,5 @@ if __name__ == '__main__':
     win = tk.Tk()
 
     surface = Surface(win)
-    win.protocol('WM_DELETE_WINDOW', closeWindow)
+    win.protocol('WM_DELETE_WINDOW', close_window)
     win.mainloop()
