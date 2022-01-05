@@ -289,6 +289,6 @@ class CardPredictor:
                             roi = card_img
                             card_color = color
                             print(predict_result)
-                            break
+                            break #插入测试
 
                     return predict_result, roi, card_color  # 识别到的字符、定位的车牌图像、车牌颜色
